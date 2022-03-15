@@ -1,8 +1,8 @@
 package kz.sdu.edu.diploma.service;
 
-import kz.sdu.edu.diploma.entities.Role;
-import kz.sdu.edu.diploma.entities.User;
-import kz.sdu.edu.diploma.repos.UserRepositoryS;
+import kz.sdu.edu.diploma.entities.Roles;
+import kz.sdu.edu.diploma.entities.Users;
+import kz.sdu.edu.diploma.repos.UserRepository;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,22 +17,22 @@ import java.util.stream.Collectors;
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
-    private UserRepositoryS userRepository;
+    private UserRepository userRepository;
 
-    public CustomUserDetailsService(UserRepositoryS userRepository) {
+    public CustomUserDetailsService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
     @Override
     public UserDetails loadUserByUsername(String usernameOrEmail) throws UsernameNotFoundException {
-        User user = userRepository.findByUsernameOrEmail(usernameOrEmail, usernameOrEmail)
+        Users user = userRepository.findByUsernameOrEmail(usernameOrEmail, usernameOrEmail)
                 .orElseThrow(() ->
                         new UsernameNotFoundException("User not found with username or email:" + usernameOrEmail));
         return new org.springframework.security.core.userdetails.User(user.getEmail(),
                 user.getPassword(), mapRolesToAuthorities(user.getRoles()));
     }
 
-    private Collection< ? extends GrantedAuthority> mapRolesToAuthorities(Set<Role> roles){
+    private Collection< ? extends GrantedAuthority> mapRolesToAuthorities(Set<Roles> roles){
         return roles.stream().map(role -> new SimpleGrantedAuthority(role.getName())).collect(Collectors.toList());
     }
 }

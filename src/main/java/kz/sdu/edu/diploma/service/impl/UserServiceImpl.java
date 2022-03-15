@@ -6,7 +6,6 @@ import kz.sdu.edu.diploma.repos.RoleRepository;
 import kz.sdu.edu.diploma.repos.UserRepository;
 import kz.sdu.edu.diploma.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -26,7 +25,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
-        Users user = userRepository.findByEmail(s);
+        Users user = userRepository.findByEmail(s).orElse(null);
 
         if(user != null) return user;
         else throw new UsernameNotFoundException("User not found!!! ");
@@ -39,7 +38,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Users getUser(String email) {
-        return userRepository.findByEmail(email);
+        return userRepository.findByEmail(email).orElse(null);
     }
 
     @Override
@@ -54,34 +53,33 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Users addUser(Users user) {
-        Users checkUser = userRepository.findByEmail(user.getEmail());
+        Users checkUser = userRepository.findByEmail(user.getEmail()).orElse(null);
         if(checkUser==null){
-            Roles role = roleRepository.findByRole("ROLE_USER");
-            if(role!=null){
-                Set<Roles> roles = new HashSet<>();
-                roles.add(role);
-                user.setRoles(roles);
-                user.setPassword(passwordEncoder.encode(user.getPassword()));
-                return userRepository.save(user);
-            }
+            Roles role = roleRepository.findByName("ROLE_USER").orElse(null);
+            if (checkForNull(user, role)) return userRepository.save(user);
         }
         return null;
     }
 
     @Override
     public Users addUser(Users user, String r) {
-        Users checkUser = userRepository.findByEmail(user.getEmail());
+        Users checkUser = userRepository.findByEmail(user.getEmail()).orElse(null);
         if(checkUser==null){
-            Roles role = roleRepository.findByRole(r);
-            if(role!=null){
-                Set<Roles> roles = new HashSet<>();
-                roles.add(role);
-                user.setRoles(roles);
-                user.setPassword(passwordEncoder.encode(user.getPassword()));
-                return userRepository.save(user);
-            }
+            Roles role = roleRepository.findByName(r).orElse(null);
+            if (checkForNull(user, role)) return userRepository.save(user);
         }
         return null;
+    }
+
+    private boolean checkForNull(Users user, Roles role) {
+        if(role!=null){
+            Set<Roles> roles = new HashSet<>();
+            roles.add(role);
+            user.setRoles(roles);
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+            return true;
+        }
+        return false;
     }
 
     @Override

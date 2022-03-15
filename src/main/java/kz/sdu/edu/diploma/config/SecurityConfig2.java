@@ -31,8 +31,8 @@ public class SecurityConfig2 extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http
-                .csrf().disable()
+        http.csrf()
+                .disable()
                 .authorizeRequests()
                 .antMatchers(HttpMethod.GET, "/api/**").permitAll()
                 .antMatchers("/api/auth/**").permitAll()
@@ -53,14 +53,4 @@ public class SecurityConfig2 extends WebSecurityConfigurerAdapter {
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
     }
-
-    //    @Override
-//    @Bean
-//    protected UserDetailsService userDetailsService() {
-//        UserDetails ramesh = User.builder().username("ramesh").password(passwordEncoder()
-//                .encode("password")).roles("USER").build();
-//        UserDetails admin = User.builder().username("admin").password(passwordEncoder()
-//                .encode("admin")).roles("ADMIN").build();
-//        return new InMemoryUserDetailsManager(ramesh, admin);
-//    }
 }

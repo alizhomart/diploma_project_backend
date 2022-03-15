@@ -1,32 +1,24 @@
 package kz.sdu.edu.diploma.entities;
 
-
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
 
+@Data
 @Entity
 @Table(name = "roles")
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
 public class Roles implements GrantedAuthority {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
+    private long id;
 
-    @Column(name = "role")
-    private String role;
-
-    @Column(name = "description")
-    private String description;
+    @Column(length = 60)
+    private String name;
 
     @Override
     public String getAuthority() {
-        return role;
+        return name;
     }
 }

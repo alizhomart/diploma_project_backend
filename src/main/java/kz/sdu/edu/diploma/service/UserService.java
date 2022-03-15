@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service
 public interface UserService extends UserDetailsService {
     Users updateUser(Users user);
     Users getUser(String email);

@@ -3,12 +3,10 @@ package kz.sdu.edu.diploma.controllers;
 
 import kz.sdu.edu.diploma.dto.LoginDto;
 import kz.sdu.edu.diploma.dto.SignUpDto;
-import kz.sdu.edu.diploma.entities.Role;
-import kz.sdu.edu.diploma.entities.User;
-import kz.sdu.edu.diploma.repos.RoleRepositoryS;
-import kz.sdu.edu.diploma.repos.UserRepositoryS;
-import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
+import kz.sdu.edu.diploma.entities.Roles;
+import kz.sdu.edu.diploma.entities.Users;
+import kz.sdu.edu.diploma.repos.RoleRepository;
+import kz.sdu.edu.diploma.repos.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -33,14 +31,14 @@ public class AuthController {
     @Autowired
     private AuthenticationManager authenticationManager;
     @Autowired
-    private UserRepositoryS userRepository;
+    private UserRepository userRepository;
     @Autowired
-    private RoleRepositoryS roleRepository;
+    private RoleRepository roleRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    private static final String SUCCESS_STATUS = "success";
-    private static final String ERROR_STATUS = "error";
+    private static final String SUCCESS_STATUS = "SUCCESS";
+    private static final String ERROR_STATUS = "ERROR";
 
     @PostMapping("/signin")
     public ResponseEntity<String> authenticateUser(@RequestBody LoginDto loginDto){
@@ -56,7 +54,7 @@ public class AuthController {
         // add check for username exists in a DB
         log.info("signUpDto", signUpDto.getUsername());
         if(userRepository.existsByUsername(signUpDto.getUsername())){
-            return new ResponseEntity<>(SUCCESS_STATUS, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(ERROR_STATUS, HttpStatus.BAD_REQUEST);
         }
 
         // add check for email exists in DB
@@ -65,18 +63,19 @@ public class AuthController {
         }
 
         // create user object
-        User user = new User();
-        user.setName(signUpDto.getName());
-        user.setUsername(signUpDto.getUsername());
-        user.setEmail(signUpDto.getEmail());
-        user.setPassword(passwordEncoder.encode(signUpDto.getPassword()));
+        Roles roles = roleRepository.findByName("ROLE_USER").get();
+        Users user = Users.builder()
+                .name(signUpDto.getName())
+                .username(signUpDto.getUsername())
+                .email(signUpDto.getEmail())
+                .password(signUpDto.getPassword())
+                .build();
 
-        Role roles = roleRepository.findByName("ROLE_USER").get();
         user.setRoles(Collections.singleton(roles));
 
         userRepository.save(user);
 
-        return new ResponseEntity<>("User registered successfully", HttpStatus.OK);
+        return new ResponseEntity<>(SUCCESS_STATUS, HttpStatus.OK);
 
     }
 }

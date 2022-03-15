@@ -11,34 +11,36 @@ import javax.persistence.*;
 import java.util.Collection;
 import java.util.Set;
 
-
-@Entity
-@Table(name = "users")
-@Builder
 @Data
+@Builder
+@Entity
+@Table(name = "users", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"username"}),
+        @UniqueConstraint(columnNames = {"email"})
+})
 @AllArgsConstructor
 @NoArgsConstructor
 public class Users implements UserDetails {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
-
-    @Column(name = "email")
+    private long id;
+    private String name;
+    private String username;
     private String email;
-
-    @Column(name = "password")
     private String password;
+    private String phoneNumber;
+    private String imageURL;
 
-    @Column(name = "fullname")
-    private String fullname;
-
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinTable(name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
     private Set<Roles> roles;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return roles;
+        return (Collection<? extends GrantedAuthority>) roles;
     }
 
     @Override
