@@ -41,25 +41,25 @@ public class AuthController {
     private static final String ERROR_STATUS = "ERROR";
 
     @PostMapping("/signin")
-    public ResponseEntity<String> authenticateUser(@RequestBody LoginDto loginDto){
+    public String authenticateUser(@RequestBody LoginDto loginDto){
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 loginDto.getUsernameOrEmail(), loginDto.getPassword()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        return new ResponseEntity<>(SUCCESS_STATUS, HttpStatus.OK);
+        return SUCCESS_STATUS;
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<?> registerUser(@RequestBody SignUpDto signUpDto){
+    public String registerUser(@RequestBody SignUpDto signUpDto){
         // add check for username exists in a DB
         log.info("signUpDto", signUpDto.getUsername());
         if(userRepository.existsByUsername(signUpDto.getUsername())){
-            return new ResponseEntity<>(ERROR_STATUS, HttpStatus.BAD_REQUEST);
+            return ERROR_STATUS;
         }
 
         // add check for email exists in DB
         if(userRepository.existsByEmail(signUpDto.getEmail())){
-            return new ResponseEntity<>(ERROR_STATUS, HttpStatus.BAD_REQUEST);
+            return ERROR_STATUS;
         }
 
         // create user object
@@ -75,7 +75,7 @@ public class AuthController {
 
         userRepository.save(user);
 
-        return new ResponseEntity<>(SUCCESS_STATUS, HttpStatus.OK);
+        return SUCCESS_STATUS;
 
     }
 }

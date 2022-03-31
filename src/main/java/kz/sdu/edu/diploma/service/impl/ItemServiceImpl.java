@@ -56,8 +56,18 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    public List<Items> findAllByAuthorStartingWith(String author) {
+        return itemRepository.findAllByAuthorStartingWith(author);
+    }
+
+    @Override
     public List<Items> findAllByCategoriesStartingWith(String name) {
         return itemRepository.findAllByCategoriesStartingWith(name);
+    }
+
+    @Override
+    public List<Items> findAllByNameStartingWithOrderByStarsAsc(String name) {
+        return itemRepository.findAllByNameStartingWithOrderByStarsAsc(name);
     }
 
     @Override
@@ -72,7 +82,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<Items> findAllByNameLikeAndPriceBetweenOrderByPriceDesc(String name, double price1, double price2) {
-        return itemRepository.findAllByNameLikeAndPriceBetweenOrderByPriceDesc(name, price1, price2);
+        return itemRepository.findAllByNameStartingWithAndPriceBetweenOrderByPriceDesc(name, price1, price2);
     }
 
     @Override

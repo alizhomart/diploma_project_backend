@@ -13,10 +13,13 @@ import java.util.List;
 public interface ItemRepository extends JpaRepository<Items, Long> {
     List<Items> findAllByNameLikeOrderByPriceAsc(String name);
     List<Items> findAllByNameStartingWith(String name);
+    List<Items> findAllByNameLikeOrderByPriceDesc(String name);
+
+    List<Items> findAllByAuthorStartingWith(String author);
+    List<Items> findAllByNameStartingWithOrderByStarsAsc(String name);
+
+    List<Items> findAllByNameStartingWithAndPriceBetweenOrderByPriceAsc(String name, double price1, double price2);
+    List<Items> findAllByNameStartingWithAndPriceBetweenOrderByPriceDesc(String name, double price1, double price2);
 
     List<Items> findAllByCategoriesStartingWith(String name);
-
-    List<Items> findAllByNameLikeOrderByPriceDesc(String name);
-    List<Items> findAllByNameStartingWithAndPriceBetweenOrderByPriceAsc(String name, double price1, double price2);
-    List<Items> findAllByNameLikeAndPriceBetweenOrderByPriceDesc(String name, double price1, double price2);
 }
