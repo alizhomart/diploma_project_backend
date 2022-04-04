@@ -6,11 +6,8 @@ import kz.sdu.edu.diploma.entities.Items;
 import kz.sdu.edu.diploma.service.ItemService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -50,17 +47,17 @@ public class MainController {
 
     @GetMapping(value = "/sortByPriceAsc")
     public List<Items> sortByPriceAsc(@RequestParam String name,
-                            @RequestParam(required = false) double priceFrom,
-                            @RequestParam(required = false) double priceTo){
-        if(priceTo != 0) return itemService.findAllByNameStartingWithAndPriceBetweenOrderByPriceAsc(name, priceFrom, priceTo);
+                            @RequestParam(required = false) String priceFrom,
+                            @RequestParam(required = false) String priceTo){
+        if(priceFrom != null && priceTo != null) return itemService.findAllByNameStartingWithAndPriceBetweenOrderByPriceAsc(name, Double.parseDouble(priceFrom) , Double.parseDouble(priceTo) );
         return itemService.findAllByNameLikeOrderByPriceAsc(name);
     }
 
     @GetMapping(value = "/sortByPriceDesc")
     public List<Items> sortByPriceDesc(@RequestParam String name,
-                                      @RequestParam(required = false) double priceFrom,
-                                      @RequestParam(required = false) double priceTo){
-        if(priceTo != 0) return itemService.findAllByNameLikeAndPriceBetweenOrderByPriceDesc(name, priceFrom, priceTo);
+                                      @RequestParam(required = false) String priceFrom,
+                                      @RequestParam(required = false) String priceTo){
+        if(priceFrom != null && priceTo != null) return itemService.findAllByNameLikeAndPriceBetweenOrderByPriceDesc(name, Double.parseDouble(priceFrom) , Double.parseDouble(priceTo));
         return itemService.findAllByNameLikeOrderByPriceDesc(name);
     }
 
